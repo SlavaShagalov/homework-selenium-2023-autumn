@@ -7,9 +7,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 from ui.pages.audience_page import AudiencePage
+from ui.pages.campaign_page import CampaignPage
 from ui.pages.base_page import BasePage
 from ui.pages.hq_page import HqPage
 from ui.pages.login_page import LoginPage
+from ui.pages.budget_page import BudgetPage
 
 
 @pytest.fixture()
@@ -19,6 +21,7 @@ def driver(config):
     selenoid = config['selenoid']
     vnc = config['vnc']
     options = Options()
+    options.add_argument('--headless=new')
 
     if selenoid:
         capabilities = {
@@ -32,7 +35,7 @@ def driver(config):
             options=options
         )
     elif browser == 'chrome':
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(options=options)
     elif browser == 'firefox':
         driver = webdriver.Firefox()
     else:
@@ -91,3 +94,13 @@ def hq_page(login_page, credentials):
 def audience_page(hq_page):
     hq_page.driver.get(AudiencePage.url)
     return AudiencePage(driver=hq_page.driver)
+
+@pytest.fixture
+def campaign_page(hq_page):
+    hq_page.driver.get(CampaignPage.url)
+    return CampaignPage(driver=hq_page.driver)
+
+@pytest.fixture
+def budget_page(hq_page):
+    hq_page.driver.get(BudgetPage.url)
+    return BudgetPage(driver=hq_page.driver)
